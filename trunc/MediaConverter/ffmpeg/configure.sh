@@ -1,1 +1,0 @@
-./configure --disable-shared --disable-iconv --disable-network --enable-libmp3lame --enable-gpl --enable-small

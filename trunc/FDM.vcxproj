@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -26,21 +26,21 @@
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfAtl>Static</UseOfAtl>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfAtl>Static</UseOfAtl>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v140_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_v90|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>Dynamic</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfAtl>Static</UseOfAtl>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -62,10 +62,6 @@
     <OutDir>.\bin\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <ExecutablePath>$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
-    <ExcludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_v90|Win32'">
     <OutDir>.\bin\$(Configuration)\</OutDir>
@@ -84,12 +80,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <FunctionLevelLinking>false</FunctionLevelLinking>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level4</WarningLevel>
       <TreatWarningAsError>false</TreatWarningAsError>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>include.add;include.add\dshow;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include.add;include.add\dshow;$(BOOST_ROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;CURL_STATICLIB;USE_SSLEAY;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions);NOCRYPT;NOUNCRYPT</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\FDM.pch</PrecompiledHeaderOutputFile>
@@ -123,7 +119,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>Lib.add;$(BOOST_ROOT)\stage\lib;$(BOOST_ROOT)\lib32-msvc-10.0;%(AdditionalLibraryDirectories);$(BOOST_ROOT)\lib32-msvc-12.0</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Lib.add;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PartMediaPreview/Release/PartMediaPreview.lib;FDMCustomized/FDMCustomized_lib/Release/FDMCustomized_lib.lib;InetFile/Release/inetfile.lib;Mswsock.lib;Hash\Release\hash.lib;inetfile/curl_lib/release/curl_lib.lib;dxguid.lib;wininet.lib;rasapi32.lib;Ws2_32.lib;htmlhelp.lib;winmm.lib;strmiids.lib;Version.lib;Iphlpapi.lib;libeay32-md.lib;ssleay32-md.lib;Msimg32.lib;%(AdditionalDependencies);zlib\$(Configuration)\zlib.lib;dbghelp.lib</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalOptions>/MAPINFO:EXPORTS </AdditionalOptions>
@@ -193,8 +189,8 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <MinimalRebuild>true</MinimalRebuild>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>include.add;include.add\dshow;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>include.add;include.add\dshow;$(BOOST_ROOT)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_WINDOWS;CURL_STATICLIB;USE_SSLEAY;%(PreprocessorDefinitions);NOCRYPT;NOUNCRYPT</PreprocessorDefinitions>
       <PrecompiledHeaderOutputFile>.\Debug\FDM.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -224,7 +220,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>Lib.add;$(BOOST_ROOT)\stage\lib;$(BOOST_ROOT)\lib32-msvc-10.0;%(AdditionalLibraryDirectories);$(BOOST_ROOT)\lib32-msvc-12.0</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>Lib.add;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>PartMediaPreview\Debug\PartMediaPreview.lib;FDMCustomized/FDMCustomized_lib/Debug/FDMCustomized_lib.lib;InetFile\Debug\inetfile.lib;Hash\Debug\hash.lib;InetFile\curl_lib\debug\curl_lib.lib;dxguid.lib;wininet.lib;rasapi32.lib;Ws2_32.lib;htmlhelp.lib;winmm.lib;strmiids.lib;Version.lib;Iphlpapi.lib;libeay32d.lib;ssleay32d.lib;Msimg32.lib;%(AdditionalDependencies);zlib\$(Configuration)\zlib.lib;dbghelp.lib</AdditionalDependencies>
       <TypeLibraryFile>.\bin\Release\fdm.tlb</TypeLibraryFile>
       <AdditionalManifestDependencies>type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='X86' publicKeyToken='6595b64144ccf1df' language='*';%(AdditionalManifestDependencies)</AdditionalManifestDependencies>

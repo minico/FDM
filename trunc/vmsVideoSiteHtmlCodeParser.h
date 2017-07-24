@@ -25,25 +25,38 @@ public:
 	{
 		
 		#define register_site_with_subdomains(s,n)\
-			if (_tcsicmp (pszSite, ##s) == 0)\
+			if (_tcsicmp (pszSite, s) == 0)\
 				return n;\
-			if (lstrlen (pszSite) > lstrlen (_T(".")##s) && \
-					_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".")##s), _T(".")##s, lstrlen (_T(".")##s)) == 0)\
+			if (lstrlen (pszSite) > lstrlen (_T(".")## s) && \
+					_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".")## s), _T(".")## s, lstrlen (_T(".")## s)) == 0)\
 				return n;
 		
 
 		if (_tcsnicmp (pszSite, _T("www."), 4) == 0)
 			pszSite += 4;	
 
-		register_site_with_subdomains (_T("youtube.com"), 0);
+		if (_tcsicmp (pszSite, _T("youtube.com")) == 0)
+			return 0;
+		if (lstrlen (pszSite) > lstrlen (_T(".") _T("youtube.com")) && 
+				_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".") _T("youtube.com")), _T(".") _T("youtube.com"), lstrlen (_T(".") _T("youtube.com"))) == 0)
+			return 0;
 		
 
 		if (_tcsnicmp (pszSite, _T("video.google."), 13) == 0)
 			return 1;
 
-		register_site_with_subdomains (_T("livedigital.com"), 2);
+		if (_tcsicmp (pszSite, _T("livedigital.com")) == 0)
+			return 2;
+		if (lstrlen (pszSite) > lstrlen (_T(".") _T("livedigital.com")) && 
+				_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".") _T("livedigital.com")), _T(".") _T("livedigital.com"), lstrlen (_T(".") _T("livedigital.com"))) == 0)
+			return 2;
 
-		register_site_with_subdomains (_T("myspace.com"), 3);
+		if (_tcsicmp (pszSite, _T("myspace.com")) == 0)
+			return 3;
+		if (lstrlen (pszSite) > lstrlen (_T(".") _T("myspace.com")) && 
+				_tcsnicmp (pszSite + lstrlen (pszSite) - lstrlen (_T(".") _T("myspace.com")), _T(".") _T("myspace.com"), lstrlen (_T(".") _T("myspace.com"))) == 0)
+			return 3;
+
 
 		if (_tcsicmp (pszSite, _T("sharkle.com")) == 0)
 			return 4;

@@ -161,9 +161,6 @@
     <ClCompile Include="sdpwms.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="snprintf.cpp">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
     <ClCompile Include="TransferProtocolDownloaderImpl.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>

@@ -47,7 +47,7 @@ protected:
 	{
 		switch (pEP->ExceptionRecord->ExceptionCode)
 		{
-		case STATUS_HEAP_CORRUPTION:
+	//	case STATUS_HEAP_CORRUPTION:
 		case EXCEPTION_ACCESS_VIOLATION:
 		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
 		case EXCEPTION_DATATYPE_MISALIGNMENT:
