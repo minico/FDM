@@ -268,6 +268,7 @@ BOOL CFdmApp::InitInstance()
 		return FALSE;
 	}
 
+#if 0
 	if (vmsWinSecurity::os_supports_elevation () && 
 		_tcsncmp (m_lpCmdLine, _T("-nelvcheck"), 10) && _tcsicmp (m_lpCmdLine, _T("-autorun")))
 	{
@@ -287,6 +288,7 @@ BOOL CFdmApp::InitInstance()
 			_appMutex.Create ();
 		}
 	}
+#endif
 
 	cmdline.Parse (fsFDMCmdLineParser::Normal);
 
