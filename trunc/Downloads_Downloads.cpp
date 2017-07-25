@@ -49,9 +49,13 @@ int CDownloads_Downloads::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	
 	m_tasks.Create (this);
 	m_info.Create (this);
+	m_progress.Create(this);
+	m_info.ShowWindow(SW_HIDE);
+	m_progress.ShowWindow(SW_SHOW);
 	m_splitter.Create (AfxGetInstanceHandle (), m_hWnd, WST_HORIZONTAL);
 	m_splitter.SetWnd1 (m_tasks.m_hWnd);
-	m_splitter.SetWnd2 (m_info.m_hWnd);
+	//m_splitter.SetWnd2 (m_info.m_hWnd);
+	m_splitter.SetWnd2 (m_progress.m_hWnd);
 	m_splitter.SetMinDimensions (50, 50);
 	float fRatio = _App.View_SplitterRatio (_T("Downloads_DL_LOG"));
 	if (fRatio < 0.1f)
@@ -83,7 +87,8 @@ BOOL CDownloads_Downloads::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResu
 void CDownloads_Downloads::ShowDLInfo(BOOL bShow)
 {
 	UINT nShow = bShow ? SW_SHOW : SW_HIDE;
-	m_info.ShowWindow (nShow);
+	//	m_info.ShowWindow (nShow);
+	m_progress.ShowWindow(nShow);
 	::ShowWindow (m_splitter.m_wndSplitter, nShow);
 
 	m_bShowDLInfo = bShow;

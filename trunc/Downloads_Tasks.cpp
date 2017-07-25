@@ -211,7 +211,7 @@ void CDownloads_Tasks::OnRClick()
 
 	menu.DestroyMenu ();
 
-	_pwndDownloads->m_wndDownloads.m_info.m_progress.set_FullRedraw ();
+	_pwndDownloads->m_wndDownloads.m_progress.set_FullRedraw ();
 }
 
 vmsDownloadSmartPtr CDownloads_Tasks::GetActiveDownload()

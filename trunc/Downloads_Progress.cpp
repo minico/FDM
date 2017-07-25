@@ -38,6 +38,12 @@ CDownloads_Progress::~CDownloads_Progress()
 	CloseHandle (m_hevShutdown);
 }
 
+void CDownloads_Progress::UpdateActiveDownload()
+{
+	if (IsWindowVisible())
+		UpdateDownload();
+}
+
 BEGIN_MESSAGE_MAP(CDownloads_Progress, CWnd)
 	//{{AFX_MSG_MAP(CDownloads_Progress)
 	ON_WM_PAINT()

@@ -213,18 +213,12 @@ void CPluginFrame2::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 
+	if(m_wndTabs)
+		m_wndTabs.ShowWindow(SW_HIDE);
+
 	if (cx && cy)
 	{
-		int tabcy = 23; 
-		if (IsWindow (m_wndTabs.m_hWnd))
-		{
-			CRect rc;
-			m_wndTabs.GetItemRect (0, &rc);
-			tabcy = rc.bottom - rc.top;
-			tabcy += 3;
-			m_wndTabs.MoveWindow (0, 0, cx+10, tabcy);	
-		}
-
+		int tabcy = 0; 
 		for (int i = 0; i < _PluginMgr.GetPluginCount (); i++)
 			::MoveWindow (_PluginMgr.Plugin (i).hWnd, 0, tabcy, cx, cy - tabcy, TRUE);
 	}

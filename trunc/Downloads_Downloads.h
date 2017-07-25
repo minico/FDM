@@ -36,6 +36,7 @@ public:
 
 public:
 	CDownloads_Info m_info;		
+	CDownloads_Progress m_progress;	
 	void ApplyLanguage();
 	
 	void SaveState();

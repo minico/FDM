@@ -35,6 +35,7 @@ public:
 	vmsDownloadSmartPtr GetActiveDownload();
 	BOOL Create (CWnd *pParent);
 	virtual ~CDownloads_Progress();
+	void UpdateActiveDownload();
 
 	
 protected:

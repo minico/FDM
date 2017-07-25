@@ -335,9 +335,9 @@ void CDownloadsWnd::OnTimer(UINT )
 		{
 			vmsDownloadSmartPtr dld = _DldsMgr.GetDownload (i);
 
-			if (dld == m_wndDownloads.m_info.Get_ActiveDownload ())
+			if (dld == m_wndDownloads.m_progress.GetActiveDownload ())
 			{
-				m_wndDownloads.m_info.UpdateActiveDownload ();
+				m_wndDownloads.m_progress.UpdateActiveDownload ();
 				m_wndDownloads.m_info.m_video.m_vidman.Update ();
 				m_wndDownloads.m_info.m_bt.m_general.UpdateUploadStat ();
 				m_wndDownloads.m_info.m_bt.UpdatePeersStat ();
@@ -419,7 +419,7 @@ void CDownloadsWnd::SetActiveDownload(vmsDownloadSmartPtr dld)
 {
 	try 
 	{
-		m_wndDownloads.m_info.Set_ActiveDownload (dld);
+		m_wndDownloads.m_progress.SetActiveDownload (dld);
 	}
 	catch (const std::exception& ex)
 	{
