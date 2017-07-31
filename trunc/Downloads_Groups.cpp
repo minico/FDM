@@ -76,6 +76,9 @@ BOOL CDownloads_Groups::Create(CWnd *pParent)
 	if (FALSE == CTreeCtrl::Create (TVS_HASLINES | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_SHOWSELALWAYS, rc, pParent, 0x9876))
 		return FALSE;
 
+	TreeView_SetExtendedStyle(m_hWnd, 4, 4);
+	//SetExtendedStyle(TVS_EX_DOUBLEBUFFER, TVS_EX_DOUBLEBUFFER);
+
 	CBitmap bmpg;
 	bmpg.Attach (SBMP (IDB_GROUPS));
 	m_images.Create (16, 15, ILC_COLOR24 | ILC_MASK, 8, 2);
@@ -84,12 +87,9 @@ BOOL CDownloads_Groups::Create(CWnd *pParent)
 
 	m_hAllGroups = InsertItem (TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_STATE | TVIF_TEXT, _T(""), 0, 0,
 		TVIS_BOLD | TVIS_EXPANDED, TVIS_BOLD | TVIS_EXPANDED, 0, TVI_ROOT, TVI_LAST);
-
-	
-	
 	SetItemData (m_hAllGroups, (ULONG) &m_filterAll);
 
-	InsertGroups ();
+	//InsertGroups ();
 	InsertFilters ();
 	InsertHistory ();
 	InsertDeleted ();
@@ -167,8 +167,8 @@ void CDownloads_Groups::OnSelchanged(NMHDR*, LRESULT* pResult)
 
 	if (hItem == m_hHistory || hParent == m_hHistory)
 	{
-		if (hItem == m_hHistCustom)
-			CustomizeHistoryFilter (); 
+	//	if (hItem == m_hHistCustom)
+	//		CustomizeHistoryFilter (); 
 
 		_pwndDownloads->Set_DWWN (DWWN_HISTORY);
 		fsDldHistRecFilter* f = (fsDldHistRecFilter*) GetItemData (hItem);
@@ -340,14 +340,16 @@ void CDownloads_Groups::InsertFilters()
 	m_vStateFilters.clear ();
 
 	
-	m_hFilters = InsertItem (TVIF_IMAGE  | TVIF_SELECTEDIMAGE | TVIF_STATE | TVIF_TEXT, LS (L_FILTERS), 0, 0,
-		TVIS_BOLD | TVIS_EXPANDED, TVIS_BOLD | TVIS_EXPANDED, 0, TVI_ROOT, TVI_LAST);
+//	m_hFilters = InsertItem (TVIF_IMAGE  | TVIF_SELECTEDIMAGE | TVIF_STATE | TVIF_TEXT, LS (L_FILTERS), 0, 0,
+//		TVIS_BOLD | TVIS_EXPANDED, TVIS_BOLD | TVIS_EXPANDED, 0, TVI_ROOT, TVI_LAST);
+
+	m_hFilters = m_hAllGroups;
 
 	SetItemData (m_hFilters, (ULONG) &m_filterAll);
 
 	
-	m_hTasks = InsertItem (LS (L_TASKS), 1, 1, TVI_ROOT, TVI_FIRST);
-	SetItemData (m_hTasks, (ULONG) &m_filterTasks);
+	//m_hTasks = InsertItem (LS (L_TASKS), 1, 1, TVI_ROOT, TVI_FIRST);
+	//SetItemData (m_hTasks, (ULONG) &m_filterTasks);
 
 	
 	m_hCompleted = InsertItem (LS (L_COMPLETED), 2, 2, m_hFilters, TVI_LAST);
@@ -418,11 +420,13 @@ void CDownloads_Groups::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 void CDownloads_Groups::OnDrawItem(int , LPDRAWITEMSTRUCT lpDrawItemStruct) 
 {
+	return;
 	m_odmenu.OnDrawItem (lpDrawItemStruct);
 }
 
 void CDownloads_Groups::OnMeasureItem(int , LPMEASUREITEMSTRUCT lpMeasureItemStruct) 
 {
+	return;
 	m_odmenu.OnMeasureItem (lpMeasureItemStruct);
 }
 
@@ -440,11 +444,11 @@ void CDownloads_Groups::ApplyLanguage()
 		str.Format (_T("%s (%d)"), LS (L_OTHER), pGroup->cDownloads);
 	else
 		str = LS (L_OTHER);
-	SetItemText (m_hOther, str);
+//	SetItemText (m_hOther, str);
 
-	SetItemText (m_hFilters, LS (L_FILTERS));
+	SetItemText (m_hFilters, LS (L_ALLDLDS));
 	SetItemText (m_hCompleted, LS (L_COMPLETED));
-	SetItemText (m_hTasks, LS (L_TASKS));
+	//SetItemText (m_hTasks, LS (L_TASKS));
 	SetItemText (m_hInProgress, LS (L_INPROGRESS));
 	SetItemText (m_hScheduled, LS (L_SCHEDULED));
 	SetItemText (m_hStopped, LS (L_STOPPED));
@@ -454,7 +458,7 @@ void CDownloads_Groups::ApplyLanguage()
 	SetItemText (m_hYesterday, LS (L_YESTERDAY));
 	SetItemText (m_hLastWeek, LS (L_LASTWEEK));
 	SetItemText (m_hLastMonth, LS (L_LASTMONTH));
-	SetItemText (m_hHistCustom, LS (L_CUSTOMttt));
+	SetItemText (m_hHistCustom, L"Older");
 
 	SetItemText (m_hDeleted, LS (L_DELETED));
 }
@@ -611,10 +615,8 @@ void CDownloads_Groups::ShowGrpContextMenu(HTREEITEM hItem, BOOL bAutoDetect)
 			}	
 		}
 	}
-	else  
+	else 
 	{
-		
-
 		pPopup->EnableMenuItem (ID_GRPPROPERTIES, MF_BYCOMMAND | MF_GRAYED);
 		pPopup->EnableMenuItem (ID_GRPDELETE, MF_BYCOMMAND | MF_GRAYED);
 		pPopup->EnableMenuItem (ID_OPENGROUPFOLDER, MF_BYCOMMAND | MF_GRAYED);
@@ -1052,7 +1054,7 @@ BOOL CDownloads_Groups::IsGroupItem(HTREEITEM hItem)
 
 void CDownloads_Groups::OnTimer(UINT nIDEvent) 
 {
-	UpdateNumbersOfDownloadsInGroups ();
+//	UpdateNumbersOfDownloadsInGroups ();
 	
 	CTreeCtrl::OnTimer(nIDEvent);
 }

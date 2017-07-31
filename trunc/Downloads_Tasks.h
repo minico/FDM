@@ -137,8 +137,6 @@ protected:
 	void OnSortModeChanged();
 	
 	DLDS_LIST m_vDownloads;
-	CImageList m_selimages;
-	
 	
 	void CalcCoordsForCurSel ();
 	fsODMenu m_odmenu;	
@@ -152,12 +150,10 @@ protected:
 	};
 
 	
-	
-	
+    void InitializeSystemImageList();
+	static int GetIconIndex(const CString& csFileName);  //full path and file name
+
 	void DeleteSelected(BOOL bDontConfirmFileDeleting = FALSE);
-	
-	
-	
 	void UpdateActiveDownload (int adjSelected);
 	void OnKeyDown (WORD wVK);
 	vmsDownloadSmartPtr m_pActiveDownload;	

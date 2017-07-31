@@ -224,6 +224,14 @@ fsDldHistRecFilter_Custom::~fsDldHistRecFilter_Custom()
 
 BOOL fsDldHistRecFilter_Custom::IsSatisfies(fsDLHistoryRecord* rec)
 {
+	SYSTEMTIME s;
+	FILETIME f;
+
+	GetLocalTime(&s);
+	SystemTimeToFileTime(&s, &f);
+
+	return fsGetFTimeDaysDelta(f, rec->dateRecordAdded) > 31;
+#if 0
 	if (CompareFileTime (&m_tFrom, &rec->dateAdded) == 1)
 		return FALSE;
 
@@ -231,6 +239,7 @@ BOOL fsDldHistRecFilter_Custom::IsSatisfies(fsDLHistoryRecord* rec)
 		return FALSE;
 	
 	return TRUE;
+#endif
 }
 
 BOOL fsDldHistRecFilter_DuringPeriod::IsSatisfies(fsDLHistoryRecord * rec)

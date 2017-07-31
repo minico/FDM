@@ -44,6 +44,7 @@ CDownloads_Tasks::CDownloads_Tasks()
 
 CDownloads_Tasks::~CDownloads_Tasks()
 {
+	m_images.Detach();
 }
 
 BEGIN_MESSAGE_MAP(CDownloads_Tasks, CListCtrlEx)
@@ -99,21 +100,11 @@ BOOL CDownloads_Tasks::Create(CWnd *pParent)
 			rc, pParent, 0x56789))
 		return FALSE;
 
-	SetExtendedStyle (LVS_EX_FULLROWSELECT|LVS_EX_HEADERDRAGDROP|
+	SetExtendedStyle (LVS_EX_FULLROWSELECT|LVS_EX_HEADERDRAGDROP|LVS_EX_DOUBLEBUFFER|
 		LVS_EX_INFOTIP|0x00004000);
 
-	m_images.Create (16, 17, ILC_COLOR24 | ILC_MASK, 7, 1);
-	CBitmap bmp;
-	bmp.Attach (SBMP (IDB_DOWNLOADSTASKS));
-  	
-	m_images.Add (&bmp, RGB (255, 0, 255));
-	SetImageList (&m_images, LVSIL_SMALL);
+	InitializeSystemImageList();
 
-	m_selimages.Create (16, 17, ILC_COLOR24 | ILC_MASK, 7, 1);
-	CBitmap bmp2;
-	bmp2.Attach (SBMP (IDB_DOWNLOADSTASKS_SEL));
-	m_selimages.Add (&bmp2, RGB (255, 0, 255));
-	SetSelectedImages (&m_selimages);
 
 	InsertColumn (0, _T(""), LVCFMT_LEFT, 200, 0);
 	InsertColumn (1, _T(""), LVCFMT_LEFT, 50, 0);
@@ -315,6 +306,36 @@ int CDownloads_Tasks::FindItem(vmsDownloadSmartPtr dld)
 	}
 
 	return -1;
+}
+
+void CDownloads_Tasks::InitializeSystemImageList()
+{
+	//image list setup   
+	HIMAGELIST  hSystemSmallImageList;
+	SHFILEINFO    ssfi;
+	//get a handle to the system small icon list   
+	hSystemSmallImageList = (HIMAGELIST)SHGetFileInfo((LPCTSTR)_T("C:\\"), 0,
+		&ssfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_SMALLICON);
+	//attach it to the small image list  //--DON'T FORGET TO PUT m_smallImageList.Detach();  in your destructor   		
+	m_images.Attach(hSystemSmallImageList);
+
+	//Set the list control image list   
+	SetImageList(&m_images, LVSIL_SMALL);
+	SetSelectedImages(&m_images);
+}
+
+int CDownloads_Tasks::GetIconIndex(const CString& csFileName)
+{
+	SHFILEINFO    sfi;
+
+	SHGetFileInfo(
+		(LPCTSTR)csFileName,
+		0,
+		&sfi,
+		sizeof(SHFILEINFO),
+		SHGFI_SYSICONINDEX | SHGFI_SMALLICON);
+
+	return sfi.iIcon;
 }
 
 void CDownloads_Tasks::DeleteSelected(BOOL bDontConfirmFileDeleting)
@@ -742,6 +763,8 @@ void CDownloads_Tasks::OnDldschedule()
 
 int CDownloads_Tasks::GetDownloadImage(vmsDownloadSmartPtr dld)
 {
+	return GetIconIndex((LPTSTR)dld->pMgr->get_OutputFilePathName());
+
 	if (dld->pMgr->IsRunning ())
 	{
 		if (dld->pMgr->GetDownloadingSectionCount () || dld->pMgr->GetSpeed ())
@@ -2123,6 +2146,7 @@ void CDownloads_Tasks::UpdateDownload(size_t nIndex, BOOL bRedraw)
 		clr = RGB (0, 0, 0);
 	}
 
+	clr = RGB (0, 0, 0);
 	SetItemColor (nIndex, clr, FALSE);
 
 	if (bRedraw)
@@ -2157,9 +2181,9 @@ void CDownloads_Tasks::OnDldshowprogressdlg()
 				dld->pdlg = new CDlg_Download;
 				dld->pdlg->Create (dld);
 			}
-			dld->pdlg->ShowWindow (SW_SHOW);
-			dld->pdlg->BringWindowToTop ();
-			dld->pdlg->SetFocus ();
+			dld->pdlg->ShowWindow (SW_HIDE);
+			//dld->pdlg->BringWindowToTop ();
+			//dld->pdlg->SetFocus ();
 		}
 	}
 }
