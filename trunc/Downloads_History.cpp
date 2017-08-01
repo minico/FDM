@@ -343,20 +343,12 @@ void CDownloads_History::OnUrltoclipboard()
 
 void CDownloads_History::OnSortModeChanged()
 {
-	if (m_sortMode != LCSM_ASCENDING)
-		m_sortMode = LCSM_ASCENDING;
-	
 	Sort ();
 }
 
 void CDownloads_History::Sort()
 {
-	if (m_sortMode != LCSM_NONE)
-		SortItems (_sortFunc, DWORD (this));
-	else
-	{
-		_pwndDownloads->ApplyHistoryCurrentFilter ();
-	}
+	SortItems (_sortFunc, DWORD (this));
 }
 
 int CALLBACK CDownloads_History::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp)
@@ -364,29 +356,30 @@ int CALLBACK CDownloads_History::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 	CDownloads_History* pThis = (CDownloads_History*) lp;
 	fsDLHistoryRecord* rec1 = (fsDLHistoryRecord*) item1;
 	fsDLHistoryRecord* rec2 = (fsDLHistoryRecord*) item2;
+	int factor = (pThis->m_sortMode == LCSM_ASCENDING ? 1 : (-1));
 
 	switch (pThis->m_iSortCol)
 	{
 		case 0:	
-			return _tcsicmp (rec1->strFileName, rec2->strFileName);
+			return _tcsicmp (rec1->strFileName, rec2->strFileName)*factor;
 		
 		case 1:	
-			return _tcsicmp (rec1->strURL, rec2->strURL);
+			return _tcsicmp (rec1->strURL, rec2->strURL)*factor;
 
 		case 2:	
-			return CompareFileTime (&rec2->dateAdded, &rec1->dateAdded);
+			return CompareFileTime (&rec2->dateAdded, &rec1->dateAdded)*factor;
 
 		case 3:	
 			if (rec1->dateDownloaded.dwHighDateTime == 0 && rec2->dateDownloaded.dwHighDateTime == 0)
 				return 0;
 			
 			if (rec2->dateDownloaded.dwHighDateTime == 0)
-				return -1;
+				return -1*factor;
 
 			if (rec1->dateDownloaded.dwHighDateTime == 0)
-				return 1;
+				return 1*factor;
 
-			return CompareFileTime (&rec2->dateDownloaded, &rec1->dateDownloaded);
+			return CompareFileTime (&rec2->dateDownloaded, &rec1->dateDownloaded)*factor;
 
 		case 4:	
 			UINT64 size1;
@@ -395,18 +388,18 @@ int CALLBACK CDownloads_History::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 			size2 = rec2->uFileSize;
 			
 			if (size1 == _UI64_MAX)
-				return size2 == _UI64_MAX ? 0 : 1;
+				return (size2 == _UI64_MAX ? 0 : 1)*factor;
 
 			if (size2 == _UI64_MAX)
-				return size1 == _UI64_MAX ? 0 : -1;
+				return (size1 == _UI64_MAX ? 0 : -1)*factor;
 
 			if (size1 == size2)
 				return 0;
 
-			return size1 > size2 ? -1 : 1;
+			return (size1 > size2 ? -1 : 1)*factor;
 
 		case 5:	
-			return _tcsicmp (rec1->strSavedTo, rec2->strSavedTo);
+			return _tcsicmp (rec1->strSavedTo, rec2->strSavedTo)*factor;
 	}
 
 	return 0;

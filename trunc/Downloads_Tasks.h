@@ -109,14 +109,30 @@ public:
 
 	
 protected:
-	static int _compareDownloadsByDateAdded (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByComment (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsBySpeed (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByNumberOfSections (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByTimeRamaining (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByDownloadedByteCount (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByLDFileSize (LPCVOID p1, LPCVOID p2);
-	static int _compareDownloadsByFileName (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByDateAddedAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByDateAddedDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByCommentAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByCommentDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsBySpeedAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsBySpeedDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByNumberOfSectionsAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByNumberOfSectionsDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByTimeRamainingAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByTimeRamainingDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByDownloadedByteCountAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByDownloadedByteCountDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByLDFileSizeAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByLDFileSizeDsc (LPCVOID p1, LPCVOID p2);
+
+	static int _compareDownloadsByFileNameAsc (LPCVOID p1, LPCVOID p2);
+	static int _compareDownloadsByFileNameDsc (LPCVOID p1, LPCVOID p2);
+
 	bool m_bHasEnableSeedingDlds;
 	void UpdateDownload (size_t nIndex, BOOL bRedraw);
 	
@@ -151,7 +167,7 @@ protected:
 
 	
     void InitializeSystemImageList();
-	static int GetIconIndex(const CString& csFileName);  //full path and file name
+	static int GetIconIndex(const CString& csFileName, bool bUseAttrib);  //full path and file name
 
 	void DeleteSelected(BOOL bDontConfirmFileDeleting = FALSE);
 	void UpdateActiveDownload (int adjSelected);

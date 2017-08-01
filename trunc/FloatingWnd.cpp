@@ -63,7 +63,7 @@ BOOL CFloatingWnd::Create()
 	_App.View_ReadWndPlacement (this, _T("FloatingWnd"), 
 		_App.View_FloatingWindow () == FALSE ? fsAppSettings::RWPA_FORCE_SWHIDE : fsAppSettings::RWPA_NONE);
 
-	SetWindowPos (NULL, 0, 0, 40, 40, SWP_NOMOVE | SWP_NOZORDER);
+	SetWindowPos (NULL, 0, 0, 32, 32, SWP_NOMOVE | SWP_NOZORDER);
 
 	Show (_App.View_FloatingWindow (), FALSE);
 	UpdateTimer ();
@@ -80,12 +80,12 @@ void CFloatingWnd::OnPaint()
 {
 	CFrameWnd::OnPaint();
 	CDC* pdc = GetWindowDC ();
-	CBrush br (GetSysColor (COLOR_WINDOW));
-	CBrush *oldbr = pdc->SelectObject (&br);
-	pdc->Rectangle (0, 0, 40, 40);
-	pdc->SelectObject (oldbr);
+	//CBrush br (GetSysColor (COLOR_WINDOW));
+	//CBrush *oldbr = pdc->SelectObject (&br);
+	//pdc->Rectangle (0, 0, 40, 40);
+	//pdc->SelectObject (oldbr);
 	
-	::DrawIconEx (pdc->m_hDC, 4, 4, m_hLogoIcon, 32, 32, 0, NULL, DI_NORMAL);
+	::DrawIconEx (pdc->m_hDC, 0, 0, m_hLogoIcon, 32, 32, 0, NULL, DI_NORMAL);
 	ReleaseDC (pdc);
 }
 

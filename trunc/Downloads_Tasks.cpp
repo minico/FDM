@@ -38,7 +38,7 @@ extern CDownloadsWnd* _pwndDownloads;
 CDownloads_Tasks::CDownloads_Tasks()
 {
 	m_pActiveDownload = NULL;
-	m_sortModeSupport = LCSM_DESCENDING_NOTSUPPORTED;
+	//m_sortModeSupport = LCSM_DESCENDING_NOTSUPPORTED;
 	m_bAddingDownloads = false;
 }
 
@@ -324,16 +324,25 @@ void CDownloads_Tasks::InitializeSystemImageList()
 	SetSelectedImages(&m_images);
 }
 
-int CDownloads_Tasks::GetIconIndex(const CString& csFileName)
+int CDownloads_Tasks::GetIconIndex(const CString& csFileName, bool bUseAttrib)
 {
 	SHFILEINFO    sfi;
-
-	SHGetFileInfo(
-		(LPCTSTR)csFileName,
-		0,
-		&sfi,
-		sizeof(SHFILEINFO),
-		SHGFI_SYSICONINDEX | SHGFI_SMALLICON);
+	if (bUseAttrib) {
+		SHGetFileInfo(
+			(LPCTSTR)csFileName,
+			FILE_ATTRIBUTE_NORMAL,
+			&sfi,
+			sizeof(SHFILEINFO),
+			SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES);
+	}
+	else {
+		SHGetFileInfo(
+			(LPCTSTR)csFileName,
+			0,
+			&sfi,
+			sizeof(SHFILEINFO),
+			SHGFI_SYSICONINDEX | SHGFI_SMALLICON);
+	}
 
 	return sfi.iIcon;
 }
@@ -763,7 +772,7 @@ void CDownloads_Tasks::OnDldschedule()
 
 int CDownloads_Tasks::GetDownloadImage(vmsDownloadSmartPtr dld)
 {
-	return GetIconIndex((LPTSTR)dld->pMgr->get_OutputFilePathName());
+	return GetIconIndex((LPTSTR)dld->pMgr->get_OutputFilePathName(), !dld->pMgr->IsDone());
 
 	if (dld->pMgr->IsRunning ())
 	{
@@ -1278,11 +1287,7 @@ void CDownloads_Tasks::OnSortModeChanged()
 
 void CDownloads_Tasks::Sort()
 {
-	if (m_sortMode != LCSM_NONE)
-	{
-		SortDownloads ();
-		m_sortMode = LCSM_NONE;
-	}
+	SortDownloads ();
 }
 
 void CDownloads_Tasks::GetFileName(vmsDownloadSmartPtr dld, LPTSTR pszFileName)
@@ -1608,10 +1613,10 @@ CString CDownloads_Tasks::GetDownloadText(vmsDownloadSmartPtr dld, int nSubItem)
 			float val;
 			TCHAR szDim [100];
 			BytesToXBytes (uDone, &val, szDim);
-			if (dld->pMgr->IsTp() && dld->pMgr->GetPercentDone () == -1)
-				str.Format (_T("%.*g %s [%s]"), val > 999 ? 4 : 3, val, szDim, LS (L_LIVESTREAMING));
+			if (dld->pMgr->IsTp() && dld->pMgr->GetPercentDone() == -1)
+				str.Format(_T("%.*g %s [%s]"), val > 999 ? 4 : 3, val, szDim, LS(L_LIVESTREAMING));
 			else if (uSize != _UI64_MAX && uSize != 0)
-				str.Format (_T("%d%% [%.*g %s]"), (int)((double)(INT64)uDone / (INT64)uSize * 100), val > 999 ? 4 : 3, val, szDim);
+				str.Format(_T("%d%%"), (int)((double)(INT64)uDone / (INT64)uSize * 100));
 			else
 				str.Format (_T("%.*g %s"), val > 999 ? 4 : 3, val, szDim);
 		}
@@ -1737,35 +1742,59 @@ void CDownloads_Tasks::SortDownloads()
 	switch (m_iSortCol)
 	{
 	case 0:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByFileName);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByFileNameAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByFileNameDsc);
 		break;
 
 	case 1:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByLDFileSize);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByLDFileSizeAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByLDFileSizeDsc);
 		break;
 
 	case 2:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDownloadedByteCount);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDownloadedByteCountAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDownloadedByteCountDsc);
 		break;
 
 	case 3:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByTimeRamaining);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByTimeRamainingAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByTimeRamainingDsc);
 		break;
 
 	case 4:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByNumberOfSections);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByNumberOfSectionsAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByNumberOfSectionsDsc);
 		break;
 
 	case 5:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsBySpeed);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsBySpeedAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsBySpeedDsc);
 		break;
 
 	case 6:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByComment);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByCommentAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByCommentDsc);
 		break;
 
 	case 7:
-		qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDateAdded);
+		if(m_sortMode == LCSM_ASCENDING)
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDateAddedAsc);
+		else
+			qsort (&vDldsSorted.front (), N, sizeof (vmsDownloadSmartPtr), _compareDownloadsByDateAddedDsc);
 		break;
 
 	default:
@@ -2207,7 +2236,7 @@ void CDownloads_Tasks::OnDldenableseeding()
 	}
 }
 
-int CDownloads_Tasks::_compareDownloadsByFileName(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByFileNameAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2217,7 +2246,12 @@ int CDownloads_Tasks::_compareDownloadsByFileName(LPCVOID p1, LPCVOID p2)
 	return lstrcmpi (szFile1, szFile2);
 }
 
-int CDownloads_Tasks::_compareDownloadsByLDFileSize(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByFileNameDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByFileNameAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByLDFileSizeAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2239,15 +2273,20 @@ int CDownloads_Tasks::_compareDownloadsByLDFileSize(LPCVOID p1, LPCVOID p2)
 	return size1 > size2 ? -1 : 1;
 }
 
-int CDownloads_Tasks::_compareDownloadsByDownloadedByteCount(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByLDFileSizeDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByLDFileSizeAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByDownloadedByteCountAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
 
 	UINT64 done1;
 	UINT64 done2;
-	done1 = (*a1)->pMgr->GetDownloadedBytesCount ();
-	done2 = (*a2)->pMgr->GetDownloadedBytesCount ();
+	done1 = (int)(*a1)->pMgr->GetPercentDone();
+	done2 = (int)(*a2)->pMgr->GetPercentDone();
 	
 	if (done1 == done2)
 		return 0;
@@ -2255,7 +2294,12 @@ int CDownloads_Tasks::_compareDownloadsByDownloadedByteCount(LPCVOID p1, LPCVOID
 	return done1 > done2 ? -1 : 1;
 }
 
-int CDownloads_Tasks::_compareDownloadsByTimeRamaining(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByDownloadedByteCountDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByDownloadedByteCountAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByTimeRamainingAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2285,7 +2329,12 @@ int CDownloads_Tasks::_compareDownloadsByTimeRamaining(LPCVOID p1, LPCVOID p2)
 	return pr1 < pr2 ? 1 : -1;
 }
 
-int CDownloads_Tasks::_compareDownloadsByNumberOfSections(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByTimeRamainingDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByTimeRamainingAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByNumberOfSectionsAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2309,7 +2358,12 @@ int CDownloads_Tasks::_compareDownloadsByNumberOfSections(LPCVOID p1, LPCVOID p2
 	return sects1 > sects2 ? -1 : 1;
 }
 
-int CDownloads_Tasks::_compareDownloadsBySpeed(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByNumberOfSectionsDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByNumberOfSectionsAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsBySpeedAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2325,7 +2379,12 @@ int CDownloads_Tasks::_compareDownloadsBySpeed(LPCVOID p1, LPCVOID p2)
 	return speed1 > speed2 ? -1 : 1;
 }
 
-int CDownloads_Tasks::_compareDownloadsByComment(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsBySpeedDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsBySpeedAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByCommentAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
@@ -2333,12 +2392,22 @@ int CDownloads_Tasks::_compareDownloadsByComment(LPCVOID p1, LPCVOID p2)
 	return lstrcmpi ((*a1)->strComment, (*a2)->strComment);
 }
 
-int CDownloads_Tasks::_compareDownloadsByDateAdded(LPCVOID p1, LPCVOID p2)
+int CDownloads_Tasks::_compareDownloadsByCommentDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByCommentAsc(p1, p2) * (-1);
+}
+
+int CDownloads_Tasks::_compareDownloadsByDateAddedAsc(LPCVOID p1, LPCVOID p2)
 {
 	vmsDownloadSmartPtr *a1 = (vmsDownloadSmartPtr*)p1;
 	vmsDownloadSmartPtr *a2 = (vmsDownloadSmartPtr*)p2;
 
 	return CompareFileTime (&(*a1)->dateAdded, &(*a2)->dateAdded);
+}
+
+int CDownloads_Tasks::_compareDownloadsByDateAddedDsc(LPCVOID p1, LPCVOID p2)
+{
+	return _compareDownloadsByDateAddedAsc(p1, p2) * (-1);
 }
 
 void CDownloads_Tasks::OnDldcreateTP() 

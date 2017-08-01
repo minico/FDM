@@ -107,15 +107,6 @@ BOOL CFdmApp::InitInstance()
 
 	AfxEnableControlContainer ();
 
-	{
-		_configthreadlocale (_DISABLE_PER_THREAD_LOCALE);
-		tstringstream tss;
-		tss << _T (".") << GetACP ();
-		_tsetlocale(LC_ALL, tss.str ().c_str ());
-		_configthreadlocale (_ENABLE_PER_THREAD_LOCALE);
-	}
-
-	
 	SetRegistryKey (IDS_COMPANY);
 
 	CheckRegistry ();

@@ -369,22 +369,12 @@ int CDownloads_Deleted::GetDownloadImage(vmsDownloadSmartPtr dld)
 
 void CDownloads_Deleted::OnSortModeChanged()
 {
-	if (m_sortMode != LCSM_ASCENDING)
-		m_sortMode = LCSM_ASCENDING;
-	
 	Sort ();
 }
 
 void CDownloads_Deleted::Sort()
 {
-	if (m_sortMode != LCSM_NONE)
-		SortItems (_sortFunc, DWORD (this));
-	else
-	{
-		DeleteAllItems ();
-		for (int i = _DldsMgr.Get_DeletedDownloadCount () - 1; i >= 0; i--)
-			AddDownload (_DldsMgr.Get_DeletedDownload (i));
-	}
+	SortItems (_sortFunc, DWORD (this));
 }
 
 int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp)
@@ -392,6 +382,7 @@ int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 	CDownloads_Deleted* pThis = (CDownloads_Deleted*) lp;
 	vmsDownloadSmartPtr dld1 = (fsDownload*) item1;
 	vmsDownloadSmartPtr dld2 = (fsDownload*) item2;
+	int factor = (pThis->m_sortMode == LCSM_ASCENDING ? 1 : (-1));
 
 	switch (pThis->m_iSortCol)
 	{
@@ -399,7 +390,7 @@ int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 			TCHAR szFile1 [10000];  TCHAR szFile2 [10000];
 			CDownloads_Tasks::GetFileName (dld1, szFile1);
 			CDownloads_Tasks::GetFileName (dld2, szFile2);
-			return _tcsicmp (szFile1, szFile2);
+			return _tcsicmp (szFile1, szFile2)*factor;
 		
 		case 1:
 			UINT64 size1;
@@ -408,15 +399,15 @@ int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 			size2 = dld2->pMgr->GetLDFileSize ();
 			
 			if (size1 == _UI64_MAX)
-				return size2 == _UI64_MAX ? 0 : 1;
+				return (size2 == _UI64_MAX ? 0 : 1)*factor;
 
 			if (size2 == _UI64_MAX)
-				return size1 == _UI64_MAX ? 0 : -1;
+				return (size1 == _UI64_MAX ? 0 : -1)*factor;
 
 			if (size1 == size2)
 				return 0;
 
-			return size1 > size2 ? -1 : 1;
+			return (size1 > size2 ? -1 : 1)*factor;
 
 		case 2:
 			UINT64 done1;
@@ -427,7 +418,7 @@ int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 			if (done1 == done2)
 				return 0;
 
-			return done1 > done2 ? -1 : 1;
+			return (done1 > done2 ? -1 : 1)*factor;
 
 		case 3:
 			UINT sects1, sects2;
@@ -438,7 +429,7 @@ int CALLBACK CDownloads_Deleted::_sortFunc(LPARAM item1, LPARAM item2, LPARAM lp
 			if (sects1 == sects2)
 				return 0;
 
-			return sects1 > sects2 ? -1 : 1;
+			return (sects1 > sects2 ? -1 : 1)*factor;
 	}
 
 	return 0;

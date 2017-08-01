@@ -92,13 +92,15 @@ public:
 	virtual ~CListCtrlEx();
 
 	
+	fsLCSortMode m_sortMode;	
+
 protected:
 	virtual void OnItemChanged (NM_LISTVIEW* pLV);
 	CImageList m_imgsSort;	
 	void InitSortImages();
+	int GetSelectedColumn();
 	
 	virtual void OnSortModeChanged ();
-	fsLCSortMode m_sortMode;	
 	fsLCSortModeSupport m_sortModeSupport;
 	int m_iSortCol;				
 	

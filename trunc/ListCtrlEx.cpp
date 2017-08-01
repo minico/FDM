@@ -19,7 +19,7 @@ CListCtrlEx::CListCtrlEx()
 	m_clrGrid = GetSysColor (COLOR_3DFACE);
 	m_pSelImages = NULL;
 	ZeroMemory (m_appszCols, sizeof (m_appszCols));
-	m_sortMode = LCSM_NONE;
+	m_sortMode = LCSM_DESCENDING;
 	m_iSortCol = -1;
 	m_sortModeSupport = LCSM_ALL_SUPPORTED;
 	m_cTotalCols = 0;
@@ -611,33 +611,85 @@ void CListCtrlEx::ChangeColumnVisibility(int iColumn)
 void CListCtrlEx::OnColumnclick(NMHDR* pNMHDR, LRESULT* pResult) 
 {
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	CHeaderCtrl* pcHeader = GetHeaderCtrl();
 
 	HDITEM hditem;
 	hditem.mask = HDI_ORDER;
-	GetHeaderCtrl ()->GetItem (pNMListView->iSubItem, &hditem);
+	pcHeader->GetItem (pNMListView->iSubItem, &hditem);
 	int iSortCol = SubItemToSubItem (hditem.iOrder);
 
-	if (m_sortMode != LCSM_NONE && m_iSortCol == iSortCol)
+	m_iSortCol = iSortCol;
+	if (m_sortMode == LCSM_ASCENDING)
+		m_sortMode = LCSM_DESCENDING;
+	else if (m_sortMode == LCSM_DESCENDING)
+		m_sortMode = LCSM_ASCENDING;
+
+	int nSelectedColumn = pNMListView->iSubItem;	
+
+	HDITEM hdSelectedItem;
+	hdSelectedItem.mask = HDI_FORMAT;
+	pcHeader->GetItem(nSelectedColumn, &hdSelectedItem);	
+
+	if ((hdSelectedItem.fmt & HDF_SORTUP) == HDF_SORTUP)
 	{
-		
+		hdSelectedItem.fmt &= ~(HDF_SORTUP);
+		hdSelectedItem.fmt |= HDF_SORTDOWN;
+		pcHeader->SetItem(nSelectedColumn, &hdSelectedItem);
 
-		if (m_sortMode == LCSM_ASCENDING)
-			m_sortMode = LCSM_DESCENDING;
-		else if (m_sortMode == LCSM_DESCENDING)
-			m_sortMode = LCSM_ASCENDING;
-		else
-			m_sortMode = LCSM_NONE;
-
-		if (m_sortMode == LCSM_DESCENDING && 
-				(m_sortModeSupport & LCSM_DESCENDING_NOTSUPPORTED))
-			m_sortMode = LCSM_NONE;
 	}
+	else if ((hdSelectedItem.fmt & HDF_SORTDOWN) == HDF_SORTDOWN)
+	{
+		hdSelectedItem.fmt &= ~(HDF_SORTDOWN);
+		hdSelectedItem.fmt |= HDF_SORTUP;
+		pcHeader->SetItem(nSelectedColumn, &hdSelectedItem);
+
+	}	
 	else
 	{
-		m_iSortCol = iSortCol;
-		if (m_sortMode == LCSM_NONE)
-			m_sortMode = m_sortModeSupport & LCSM_ASCENDING_NOTSUPPORTED ? LCSM_DESCENDING : LCSM_ASCENDING;
-	}
+		BOOL bSortAsc = TRUE;
+
+		for (int i = 0; i < pcHeader->GetItemCount(); i++)
+		{
+			if (i == nSelectedColumn)
+				continue;
+
+			HDITEM hditem;
+			hditem.mask = HDI_FORMAT;
+			pcHeader->GetItem(i, &hditem);	
+
+			if ((hditem.fmt & HDF_SORTUP) == HDF_SORTUP)
+			{		
+				hditem.fmt &= ~(HDF_SORTUP);
+				pcHeader->SetItem(i, &hditem);
+
+				bSortAsc = TRUE;
+				break;
+			}
+			else if ((hditem.fmt & HDF_SORTDOWN) == HDF_SORTDOWN)
+			{				
+				hditem.fmt &= ~(HDF_SORTDOWN);				
+				pcHeader->SetItem(i, &hditem);
+
+				bSortAsc = FALSE;
+				break;
+			}	
+		}	
+
+		if (bSortAsc == TRUE)
+		{			
+			hdSelectedItem.fmt &= ~(HDF_SORTDOWN);
+			hdSelectedItem.fmt |= HDF_SORTUP;
+			pcHeader->SetItem(nSelectedColumn, &hdSelectedItem);
+
+		}
+		else
+		{
+			hdSelectedItem.fmt &= ~(HDF_SORTUP);
+			hdSelectedItem.fmt |= HDF_SORTDOWN;
+			pcHeader->SetItem(nSelectedColumn, &hdSelectedItem);
+
+		}
+	}	
 
 	OnSortModeChanged ();
 
@@ -656,6 +708,28 @@ void CListCtrlEx::InitSortImages()
 	bmp.Attach (SBMP (IDB_SORTIMAGES));
 	m_imgsSort.Add (&bmp, RGB (255, 0, 255));
 	GetHeaderCtrl ()->SetImageList (&m_imgsSort);
+}
+
+int CListCtrlEx::GetSelectedColumn()
+{
+		CHeaderCtrl* pcHeader = GetHeaderCtrl();
+		if (pcHeader == NULL)
+		{
+			return -1;
+		}
+
+		int nColumns = pcHeader->GetItemCount();
+		for (int i = 0; i < nColumns; i++)
+		{
+			HDITEM hdItem;
+			hdItem.mask = HDI_FORMAT;
+			pcHeader->GetItem(i, &hdItem);	
+
+			if (((hdItem.fmt & HDF_SORTUP) == HDF_SORTUP) || ((hdItem.fmt & HDF_SORTDOWN) == HDF_SORTDOWN))
+				return i;
+		}		
+
+		return -1;
 }
 
 void CListCtrlEx::VirtualView_ItemWillBeAdded(COLORREF clrBg, COLORREF clrText, BOOL bAddToBeginning)
