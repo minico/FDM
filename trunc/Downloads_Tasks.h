@@ -220,7 +220,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	
-	
+	DLDS_LIST m_vSelectedItems;
+
 	BOOL m_bAutoStart;
 };
 

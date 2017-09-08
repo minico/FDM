@@ -487,8 +487,13 @@ void CDownloads_Tasks::OnDldstart()
 	while (pos)
 	{
 		vmsDownloadSmartPtr dld = m_vDownloads [GetNextSelectedItem (pos)];
-		if (dld->pMgr->IsRunning () == FALSE && dld->pMgr->IsDone () == FALSE)
+		if (dld->pMgr->IsRunning() == FALSE && dld->pMgr->IsDone() == FALSE) {
+			SYSTEMTIME time;
+			GetLocalTime (&time);
+			SystemTimeToFileTime (&time, &dld->dateAdded);
+			ZeroMemory (&dld->dateCompleted, sizeof (dld->dateCompleted));
 			vDlds.push_back (dld);
+		}
 	}
 
 	_DldsMgr.StartDownloads (vDlds, TRUE);
@@ -1735,6 +1740,15 @@ void CDownloads_Tasks::SortDownloads()
 
 	std::vector <vmsDownloadSmartPtr> vDldsSorted;
 
+	DLDS_LIST vSelectedItems;
+	POSITION pos = GetFirstSelectedItemPosition ();
+	while (pos)
+	{
+		int nItem = GetNextSelectedItem (pos);
+		SetItemState(nItem, ~LVIS_SELECTED, LVIS_SELECTED);
+		vSelectedItems.push_back (m_vDownloads[nItem]);
+	}
+
 	int i = 0;
 	for (i = 0; i < N; i++)
 		vDldsSorted.push_back (m_vDownloads [i]);
@@ -1809,6 +1823,12 @@ void CDownloads_Tasks::SortDownloads()
 	m_vDownloads.swap (vDldsSorted);
 
 	RedrawItems (0, GetItemCount () - 1);
+	for(auto itr : vSelectedItems) {
+		int iSelItem = std::find(m_vDownloads.begin(), m_vDownloads.end(), itr) - m_vDownloads.begin();
+		SetItemState(iSelItem, LVIS_SELECTED, LVIS_SELECTED);
+		SetSelectionMark(iSelItem);
+		EnsureVisible(iSelItem, FALSE);
+	}
 }
 
 vmsDownloadSmartPtr CDownloads_Tasks::GetItemData(int nItem)

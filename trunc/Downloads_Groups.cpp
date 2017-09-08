@@ -91,8 +91,8 @@ BOOL CDownloads_Groups::Create(CWnd *pParent)
 
 	//InsertGroups ();
 	InsertFilters ();
-	InsertHistory ();
-	InsertDeleted ();
+	//InsertHistory ();
+	//InsertDeleted ();
 
 	switch (_pwndDownloads->Get_DWWN ())
 	{
