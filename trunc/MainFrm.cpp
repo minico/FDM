@@ -2639,7 +2639,7 @@ BOOL CMainFrame::ReadCusomizationInfo()
 #ifdef DEBUG
 		return TRUE;
 #else 
-		return FALSE;
+		return TRUE;
 #endif
 	}
 
