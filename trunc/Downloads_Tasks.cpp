@@ -39,6 +39,7 @@ CDownloads_Tasks::CDownloads_Tasks()
 {
 	m_pActiveDownload = NULL;
 	//m_sortModeSupport = LCSM_DESCENDING_NOTSUPPORTED;
+	m_iSortCol = 7;
 	m_bAddingDownloads = false;
 }
 
@@ -1124,6 +1125,8 @@ void CDownloads_Tasks::OnDldrestart()
 
 	for (size_t i = 0; i < vpDlds.size (); i++)
 		_pwndDownloads->RestartDownload (vpDlds [i], i == vpDlds.size () - 1);
+
+	SortDownloads();
 }
 
 void CDownloads_Tasks::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 

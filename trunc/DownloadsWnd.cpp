@@ -1808,6 +1808,7 @@ void CDownloadsWnd::FilterDownloads2(fsDldFilter *filter, int *pProgress)
 	}
 
 	pList->EndAddDownloads ();
+	pList->SortDownloads();
 	pList->UnlockList ();
 }
 
@@ -2103,8 +2104,6 @@ void CDownloadsWnd::RestartDownload(vmsDownloadSmartPtr dld, BOOL bSelThisDld)
 
 		dld->setDirty();
 		
-		_DldsMgr.MoveDownloadToEndOfList (dld);
-
 		if (-1 != m_wndDownloads.m_tasks.FindItem (dld))
 		{
 			
@@ -2759,6 +2758,8 @@ void CDownloadsWnd::onDownloadsHasBeenAdded_imp(DLDS_LIST &vDlds, bool bPlaceToT
 			m_wndDownloads.m_tasks.AddDownloadToList (vDlds [i], FALSE, bPlaceToTop);	
 
 		m_wndDownloads.m_tasks.EndAddDownloads ();
+		
+		m_wndDownloads.m_tasks.SortDownloads();
 
 		if (bNeedShow)
 			m_wndDownloads.m_tasks.SelectDownload (bPlaceToTop ? vDlds [0] : vDlds [vDlds.size () - 1]);
