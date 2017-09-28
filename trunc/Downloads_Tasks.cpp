@@ -1624,7 +1624,13 @@ CString CDownloads_Tasks::GetDownloadText(vmsDownloadSmartPtr dld, int nSubItem)
 			if (dld->pMgr->IsTp() && dld->pMgr->GetPercentDone() == -1)
 				str.Format(_T("%.*g %s [%s]"), val > 999 ? 4 : 3, val, szDim, LS(L_LIVESTREAMING));
 			else if (uSize != _UI64_MAX && uSize != 0)
-				str.Format(_T("%d%%"), (int)((double)(INT64)uDone / (INT64)uSize * 100));
+			{ 
+				float fPercent = (float)((double)(INT64)uDone / (INT64)uSize * 100);
+				if(fPercent < 100)
+					str.Format(_T("%.1f%%"), fPercent);
+				else
+					str.Format(_T("%d%%"), (INT)fPercent);
+			}
 			else
 				str.Format (_T("%.*g %s"), val > 999 ? 4 : 3, val, szDim);
 		}
@@ -2233,9 +2239,9 @@ void CDownloads_Tasks::OnDldshowprogressdlg()
 				dld->pdlg = new CDlg_Download;
 				dld->pdlg->Create (dld);
 			}
-			dld->pdlg->ShowWindow (SW_HIDE);
-			//dld->pdlg->BringWindowToTop ();
-			//dld->pdlg->SetFocus ();
+			dld->pdlg->ShowWindow (SW_SHOW);
+			dld->pdlg->BringWindowToTop ();
+			dld->pdlg->SetFocus ();
 		}
 	}
 }

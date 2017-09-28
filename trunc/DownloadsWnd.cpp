@@ -205,7 +205,7 @@ int CDownloadsWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	ApplyDWWN ();
 
-	SetTimer (1, 1000, NULL);
+	SetTimer (1, 10, NULL);
 
 	
 	_App.View_ReadWndSize (&m_wndGroups, _T("DownloadsGroups"));
@@ -2148,7 +2148,7 @@ LRESULT CDownloadsWnd::OnDWCreateDldDialog(WPARAM wp, LPARAM lp)
 
 	dld->pdlg = new CDlg_Download;
 	dld->pdlg->Create (dld);
-	dld->pdlg->ShowWindow (SW_HIDE);
+	dld->pdlg->ShowWindow(SW_SHOW);
 
 	return 0;
 }

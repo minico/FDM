@@ -2183,7 +2183,7 @@ void fsAppSettings::DownloadDialog_AutoClose(BOOL b)
 
 BOOL fsAppSettings::DownloadDialog_Use()
 {
-	return m_stgs.GetProfileInt (_T ("Settings\\View"), _T ("DldDlg_Use"), TRUE);
+	return m_stgs.GetProfileInt (_T ("Settings\\View"), _T ("DldDlg_Use"), FALSE);
 }
 
 void fsAppSettings::DownloadDialog_Use(BOOL b)
