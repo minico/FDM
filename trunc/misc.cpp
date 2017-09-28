@@ -83,7 +83,7 @@ void BytesToXBytes (UINT64 uBytes, float* pfXBytes, LPTSTR pszXVal)
 	int i = 0;
 	double dBytes = (double) (INT64)uBytes;
 
-	while (dBytes > 9999)
+	while (dBytes > 1024)
 	{
 		dBytes /= 1024;
 		i++;
